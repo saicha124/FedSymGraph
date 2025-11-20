@@ -28,11 +28,18 @@ class FedSymClient(fl.client.NumPyClient):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01)
         self.explainer = HybridExplainer(use_openai=use_openai)
         
+        self.privacy_wrapper = None
         if self.use_privacy:
-            print(f"[Client {self.client_id}] WARNING: Differential Privacy is experimental.")
-            print(f"[Client {self.client_id}] Opacus does not support PyTorch Geometric layers (GATv2Conv).")
-            print(f"[Client {self.client_id}] DP is disabled. Use custom grad samplers for production.")
-            self.use_privacy = False
+            print(f"[Client {self.client_id}] Differential Privacy ENABLED")
+            print(f"[Client {self.client_id}] Using custom DP implementation compatible with PyTorch Geometric")
+            self.privacy_wrapper = DifferentialPrivacyWrapper(
+                model=self.model,
+                optimizer=self.optimizer,
+                data_loader=self.train_loader,
+                noise_multiplier=1.1,
+                max_grad_norm=1.0
+            )
+            print(f"[Client {self.client_id}] DP Config: noise_multiplier=1.1, max_grad_norm=1.0")
 
     def fit(self, parameters, config):
         """Train the model locally on client data."""
@@ -49,13 +56,22 @@ class FedSymClient(fl.client.NumPyClient):
                 out = self.model(batch.x, batch.edge_index, batch.batch)
                 loss = torch.nn.CrossEntropyLoss()(out, batch.y)
                 loss.backward()
-                self.optimizer.step()
+                
+                if self.use_privacy and self.privacy_wrapper:
+                    self.privacy_wrapper.step()
+                else:
+                    self.optimizer.step()
                 
                 total_loss += loss.item()
                 num_batches += 1
         
         avg_loss = total_loss / num_batches if num_batches > 0 else 0
-        print(f"[Client {self.client_id}] Training loss: {avg_loss:.4f}")
+        
+        if self.use_privacy and self.privacy_wrapper:
+            epsilon = self.privacy_wrapper.get_epsilon(delta=1e-5)
+            print(f"[Client {self.client_id}] Training loss: {avg_loss:.4f}, Privacy: ε={epsilon:.2f}")
+        else:
+            print(f"[Client {self.client_id}] Training loss: {avg_loss:.4f}")
         
         return self.get_parameters(), len(self.train_loader.dataset), {"loss": avg_loss}
 

@@ -12,11 +12,13 @@ class DifferentialPrivacyWrapper:
     
     def clip_gradients(self):
         params = [p for p in self.model.parameters() if p.grad is not None]
-        total_norm = torch.sqrt(sum(p.grad.norm(2) ** 2 for p in params))
+        if len(params) == 0:
+            return
+        total_norm = torch.sqrt(torch.tensor(sum(p.grad.norm(2).item() ** 2 for p in params)))
         clip_coef = self.max_grad_norm / (total_norm + 1e-6)
         if clip_coef < 1:
             for p in params:
-                p.grad.mul_(clip_coef)
+                p.grad.mul_(clip_coef.item())
     
     def add_noise(self):
         noise_scale = self.noise_multiplier * self.max_grad_norm

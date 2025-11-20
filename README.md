@@ -38,7 +38,8 @@ A production-grade implementation of a **Federated Learning system** for network
 - Node features represent traffic statistics
 
 ### 3. Differential Privacy
-- Opacus integration for gradient noise injection
+- Custom DP implementation compatible with PyTorch Geometric
+- Gradient clipping and noise injection
 - Configurable privacy budget (ε, δ)
 - Prevents data leakage during aggregation
 
@@ -131,7 +132,7 @@ FedSymGraph/
 3. **Secure Aggregation**: Server aggregates client updates using FedAvg
 4. **Repeat**: Process continues for N rounds
 
-Note: Differential Privacy gradient noise is currently not applied due to library incompatibilities.
+Note: Differential Privacy is now fully functional with a custom implementation that supports PyTorch Geometric layers.
 
 ### Detection & Explanation
 1. **Anomaly Detection**: GNN classifies network flows as benign/malicious
@@ -149,9 +150,11 @@ SSH login attempts. This poses a high risk of system compromise.
 
 ### Privacy
 - **No Data Sharing**: Only model updates leave client premises
-- **Differential Privacy**: Currently experimental due to Opacus incompatibility with PyTorch Geometric GNN layers (GATv2Conv)
-  - Production deployment requires custom grad samplers for torch_geometric modules
-  - Privacy is disabled by default; use `--enable-privacy` to test (may cause errors)
+- **Differential Privacy**: Fully functional with custom implementation
+  - Compatible with PyTorch Geometric GNN layers (GATv2Conv)
+  - Implements gradient clipping and Gaussian noise injection
+  - Privacy is disabled by default; use `--enable-privacy` to enable
+  - Reports privacy budget (epsilon) during training
 
 ### Security Considerations
 ⚠️ **Important**: This demo runs without TLS encryption for simplicity. For production deployment:
