@@ -95,10 +95,10 @@ python server.py [OPTIONS]
 **Client:**
 ```bash
 python client.py [OPTIONS]
-  --client_id NUM      Client identifier (default: 1)
-  --server ADDR        Server address (default: 127.0.0.1:8080)
-  --no-privacy         Disable differential privacy
-  --no-llm             Disable LLM explanations (faster, no API calls)
+  --client_id NUM       Client identifier (default: 1)
+  --server ADDR         Server address (default: 127.0.0.1:8080)
+  --enable-privacy      Enable differential privacy (experimental, see limitations)
+  --no-llm              Disable LLM explanations (faster, no API calls)
 ```
 
 ### Configuration File
@@ -128,9 +128,10 @@ FedSymGraph/
 ### Training Flow
 1. **Initialization**: Global coordinator broadcasts initial model weights
 2. **Local Training**: Each client trains on local network traffic graphs
-3. **Privacy Protection**: Gradients are noised using differential privacy
-4. **Secure Aggregation**: Server aggregates client updates using FedAvg
-5. **Repeat**: Process continues for N rounds
+3. **Secure Aggregation**: Server aggregates client updates using FedAvg
+4. **Repeat**: Process continues for N rounds
+
+Note: Differential Privacy gradient noise is currently not applied due to library incompatibilities.
 
 ### Detection & Explanation
 1. **Anomaly Detection**: GNN classifies network flows as benign/malicious
@@ -144,11 +145,22 @@ an adversary attempting to gain unauthorized access through repeated
 SSH login attempts. This poses a high risk of system compromise.
 ```
 
-## Privacy Guarantees
+## Privacy & Security Notes
 
-- **Differential Privacy**: ε ≈ 1.5 at δ = 1e-5 (configurable)
-- **Gradient Noise**: Calibrated to privacy budget
+### Privacy
 - **No Data Sharing**: Only model updates leave client premises
+- **Differential Privacy**: Currently experimental due to Opacus incompatibility with PyTorch Geometric GNN layers (GATv2Conv)
+  - Production deployment requires custom grad samplers for torch_geometric modules
+  - Privacy is disabled by default; use `--enable-privacy` to test (may cause errors)
+
+### Security Considerations
+⚠️ **Important**: This demo runs without TLS encryption for simplicity. For production deployment:
+- Use Flower's SuperLink with TLS certificates
+- Enable client authentication
+- Implement secure communication channels
+- Never deploy to untrusted networks without encryption
+
+The current gRPC server binding (0.0.0.0:8080) exposes federated traffic in plaintext.
 
 ## MITRE ATT&CK Coverage
 

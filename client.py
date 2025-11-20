@@ -14,7 +14,7 @@ class FedSymClient(fl.client.NumPyClient):
     Federated Learning client with privacy-preserving training and
     neuro-symbolic explainability.
     """
-    def __init__(self, client_id, use_privacy=True, use_openai=True):
+    def __init__(self, client_id, use_privacy=False, use_openai=True):
         self.client_id = client_id
         self.use_privacy = use_privacy
         
@@ -24,21 +24,10 @@ class FedSymClient(fl.client.NumPyClient):
         self.explainer = HybridExplainer(use_openai=use_openai)
         
         if self.use_privacy:
-            try:
-                privacy_wrapper = DifferentialPrivacyWrapper(
-                    model=self.model,
-                    optimizer=self.optimizer,
-                    data_loader=self.train_loader,
-                    noise_multiplier=1.1,
-                    max_grad_norm=1.0
-                )
-                self.model = privacy_wrapper.get_model()
-                self.optimizer = privacy_wrapper.get_optimizer()
-                self.train_loader = privacy_wrapper.get_data_loader()
-                print(f"[Client {self.client_id}] Differential Privacy enabled")
-            except Exception as e:
-                print(f"[Client {self.client_id}] Privacy setup failed: {e}. Running without DP.")
-                self.use_privacy = False
+            print(f"[Client {self.client_id}] WARNING: Differential Privacy is experimental.")
+            print(f"[Client {self.client_id}] Opacus does not support PyTorch Geometric layers (GATv2Conv).")
+            print(f"[Client {self.client_id}] DP is disabled. Use custom grad samplers for production.")
+            self.use_privacy = False
 
     def fit(self, parameters, config):
         """Train the model locally on client data."""
@@ -125,20 +114,20 @@ def main():
     parser = argparse.ArgumentParser(description="FedSymGraph Federated Client")
     parser.add_argument("--client_id", type=int, default=1, help="Client ID")
     parser.add_argument("--server", type=str, default="127.0.0.1:8080", help="Server address")
-    parser.add_argument("--no-privacy", action="store_true", help="Disable differential privacy")
+    parser.add_argument("--enable-privacy", action="store_true", help="Enable differential privacy (experimental, not compatible with GNN layers)")
     parser.add_argument("--no-llm", action="store_true", help="Disable LLM explanations")
     args = parser.parse_args()
     
     print(f"\n{'='*60}")
     print(f"FedSymGraph Client {args.client_id} Starting")
     print(f"Server: {args.server}")
-    print(f"Privacy: {'Disabled' if args.no_privacy else 'Enabled'}")
+    print(f"Privacy: {'Enabled (Experimental)' if args.enable_privacy else 'Disabled'}")
     print(f"LLM Explanations: {'Disabled' if args.no_llm else 'Enabled'}")
     print(f"{'='*60}\n")
     
     client = FedSymClient(
         client_id=args.client_id,
-        use_privacy=not args.no_privacy,
+        use_privacy=args.enable_privacy,
         use_openai=not args.no_llm
     )
     

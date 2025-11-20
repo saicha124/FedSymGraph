@@ -48,11 +48,12 @@ python client.py --client_id 2 --no-llm
 ## Features Implemented
 - ✅ Federated Learning with Flower framework
 - ✅ Graph Neural Networks (GAT architecture)
-- ✅ Differential Privacy protection
+- ⚠️ Differential Privacy protection (experimental - disabled by default due to Opacus/PyG incompatibility)
 - ✅ Symbolic reasoning with MITRE ATT&CK rules
-- ✅ LLM-based explanation generation
-- ✅ Secure aggregation strategy
+- ✅ LLM-based explanation generation (OpenAI integration)
+- ✅ Secure aggregation strategy (FedAvg)
 - ✅ Synthetic network traffic data generation
+- ✅ Integration test suite
 
 ## Configuration
 Edit `config.py` to adjust:
@@ -74,12 +75,20 @@ Edit `config.py` to adjust:
 - Nov 20, 2025: Initial implementation complete
   - Created all core modules
   - Set up federated architecture
-  - Integrated differential privacy
+  - Disabled DP by default (Opacus incompatible with PyTorch Geometric)
   - Added neuro-symbolic explainability
   - Generated synthetic data for testing
+  - Added security warnings for TLS encryption
+  - Created integration test suite
+  - Updated documentation with limitations
 
 ## Notes
 - Server runs on port 8080 by default
 - LLM explanations require OPENAI_API_KEY (use `--no-llm` flag to disable)
-- Privacy mode adds ~15-20% overhead but protects gradient information
+- ⚠️ Differential Privacy is experimental and disabled by default
+  - Opacus doesn't support torch_geometric GNN layers
+  - Production requires custom grad samplers
+- ⚠️ Current demo uses plaintext gRPC (no TLS)
+  - Not suitable for production without encryption
+  - Use Flower SuperLink with TLS for deployment
 - System simulates distributed enterprise scenario (HQ + IoT Branch)
