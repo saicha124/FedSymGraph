@@ -1,11 +1,11 @@
-modules = ["python-3.11"]
+modules = ["python-3.11", "bash"]
 [agent]
 expertMode = true
 integrations = ["python_openai:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["glibcLocales"]
+packages = ["awsebcli", "c-ares", "cacert", "cargo", "glibcLocales", "gmp", "grpc", "libffi", "libiconv", "libxcrypt", "libyaml", "openssl", "pkg-config", "rustc", "xsimd", "zlib", "gcc"]
 
 [workflows]
 runButton = "Project"
@@ -23,12 +23,12 @@ args = "FedSymGraph Server"
 name = "FedSymGraph Server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python server.py --rounds 3 --min-clients 2"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash start_server.sh"
 
 [[ports]]
 localPort = 8080
