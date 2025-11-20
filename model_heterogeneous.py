@@ -30,8 +30,8 @@ class HeteroGNN(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.num_classes = num_classes
         
-        # Input projections for each node type
-        self.ip_lin = Linear(12, hidden_channels)  # IP features: 12
+        # Input projections for each node type (updated for temporal features)
+        self.ip_lin = Linear(14, hidden_channels)  # IP features: 14 (12 + 2 temporal)
         self.port_lin = Linear(6, hidden_channels)  # Port features: 6
         self.protocol_lin = Linear(5, hidden_channels)  # Protocol features: 5
         
@@ -128,8 +128,8 @@ class HeteroGNNWithAttention(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.num_classes = num_classes
         
-        # Input projections
-        self.ip_lin = Linear(12, hidden_channels)
+        # Input projections (with temporal features)
+        self.ip_lin = Linear(14, hidden_channels)  # 14 = 12 + 2 temporal
         self.port_lin = Linear(6, hidden_channels)
         self.protocol_lin = Linear(5, hidden_channels)
         
@@ -274,8 +274,8 @@ if __name__ == "__main__":
     
     data = HeteroData()
     
-    # IP nodes
-    data['ip'].x = torch.randn(10, 12)
+    # IP nodes (with temporal features)
+    data['ip'].x = torch.randn(10, 14)
     
     # Port nodes
     data['port'].x = torch.randn(5, 6)

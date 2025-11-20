@@ -114,18 +114,22 @@ class HeterogeneousGraphLoader:
         
         return df
     
-    def create_heterogeneous_graph(self, flows_df, window_size=100):
+    def create_heterogeneous_graph(self, flows_df, window_size=100, window_idx=0):
         """
-        Create a heterogeneous graph from network flows.
+        Create a heterogeneous graph from network flows with temporal features.
         
         Args:
             flows_df: DataFrame of network flows
             window_size: Number of flows per graph
+            window_idx: Time window index for temporal ordering
         
         Returns:
-            HeteroData object with multiple node and edge types
+            HeteroData object with multiple node and edge types and temporal features
         """
         data = HeteroData()
+        
+        # Add temporal window ID
+        data.window_idx = window_idx
         
         # === Create Node Mappings ===
         
@@ -146,8 +150,8 @@ class HeterogeneousGraphLoader:
         
         # === Build Node Features ===
         
-        # IP node features (12 features)
-        ip_features = np.zeros((num_ip_nodes, 12))
+        # IP node features (14 features including 2 temporal)
+        ip_features = np.zeros((num_ip_nodes, 14))
         for idx, ip in enumerate(unique_ips):
             out_flows = flows_df[flows_df['src_ip'] == ip]
             in_flows = flows_df[flows_df['dst_ip'] == ip]
@@ -169,6 +173,15 @@ class HeterogeneousGraphLoader:
             ip_features[idx, 9] = ip_flows['proto_encoded'].nunique()  # protocol diversity
             ip_features[idx, 10] = ip_flows['binary_label'].sum()  # attack count
             ip_features[idx, 11] = ip_flows['binary_label'].mean() if len(ip_flows) > 0 else 0  # attack ratio
+            
+            # Temporal features
+            ip_features[idx, 12] = window_idx  # time window index
+            if len(ip_flows) > 1:
+                # Flow rate (flows per second if duration available)
+                total_duration = ip_flows['duration'].sum() if 'duration' in ip_flows else 1.0
+                ip_features[idx, 13] = len(ip_flows) / max(total_duration, 0.01)  # flow rate
+            else:
+                ip_features[idx, 13] = 0.0
         
         data['ip'].x = torch.tensor(ip_features, dtype=torch.float)
         
@@ -252,7 +265,8 @@ class HeterogeneousGraphLoader:
             'attack_types': flows_df[flows_df['binary_label'] == 1]['attack_type'].unique().tolist() if 'attack_type' in flows_df.columns else [],
             'num_unique_ips': num_ip_nodes,
             'num_unique_ports': num_port_nodes,
-            'num_protocols': num_protocol_nodes
+            'num_protocols': num_protocol_nodes,
+            'window_idx': window_idx
         }
         
         return data
@@ -280,7 +294,8 @@ class HeterogeneousGraphLoader:
         graphs = []
         num_flows = len(df)
         
-        # Create graphs by sliding window
+        # Create graphs by sliding window with temporal ordering
+        window_idx = 0
         for i in range(0, min(num_flows, max_graphs * flows_per_graph), flows_per_graph):
             window_df = df.iloc[i:i+flows_per_graph]
             
@@ -288,8 +303,9 @@ class HeterogeneousGraphLoader:
                 continue
             
             try:
-                graph = self.create_heterogeneous_graph(window_df, flows_per_graph)
+                graph = self.create_heterogeneous_graph(window_df, flows_per_graph, window_idx)
                 graphs.append(graph)
+                window_idx += 1
             except Exception as e:
                 print(f"Warning: Failed to create graph from window {i}: {e}")
                 continue
