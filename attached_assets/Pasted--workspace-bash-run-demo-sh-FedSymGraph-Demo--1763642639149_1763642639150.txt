@@ -1,0 +1,303 @@
+~/workspace$ bash run_demo.sh
+======================================
+FedSymGraph Demo
+======================================
+
+This demo runs a federated learning simulation with:
+  - 1 Global Coordinator (Server)
+  - 2 Federated Clients (Domain Nodes)
+
+Press Ctrl+C to stop all processes
+
+[1/3] Starting Global Coordinator...
+
+============================================================
+FedSymGraph Global Coordinator
+============================================================
+Port: 8080
+Federated Rounds: 3
+Minimum Clients Required: 2
+============================================================
+
+Waiting for federated clients to connect...
+Clients should connect to: 127.0.0.1:8080
+
+WARNING :   DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
+    Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
+
+        $ flower-superlink --insecure
+
+    To view usage and all available options, run:
+
+        $ flower-superlink --help
+
+    Using `start_server()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+INFO :      Starting Flower server, config: num_rounds=3, no round_timeout
+INFO :      Flower ECE: gRPC server running (3 rounds), SSL is disabled
+INFO :      [INIT]
+INFO :      Requesting initial parameters from one random client
+[2/3] Starting Client 1 (HQ Domain)...
+[3/3] Starting Client 2 (IoT Branch Domain)...
+/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/torch_geometric/llm/utils/backend_utils.py:26: DeprecationWarning: `torch_geometric.distributed` has been deprecated since 2.7.0 and will no longer be maintained. For distributed training, refer to our tutorials on distributed training at https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html or cuGraph examples at https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples
+  from torch_geometric.distributed import (
+
+============================================================
+FedSymGraph Client 1 Starting
+Server: 127.0.0.1:8080
+Privacy: Disabled
+LLM Explanations: Disabled
+============================================================
+
+/home/runner/workspace/data_loader.py:56: UserWarning: 'data.DataLoader' is deprecated, use 'loader.DataLoader' instead
+  train_loader = DataLoader(train_graphs, batch_size=batch_size, shuffle=True)
+/home/runner/workspace/data_loader.py:57: UserWarning: 'data.DataLoader' is deprecated, use 'loader.DataLoader' instead
+  test_loader = DataLoader(test_graphs, batch_size=batch_size, shuffle=False)
+WARNING :   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+    Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+        $ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+    To view all available options, run:
+
+        $ flower-supernode --help
+
+    Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+11/20/2025 12:43:35:WARNING:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+    Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+        $ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+    To view all available options, run:
+
+        $ flower-supernode --help
+
+    Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+11/20/2025 12:43:35:DEBUG:Opened insecure gRPC connection (no certificates were passed)
+11/20/2025 12:43:35:DEBUG:ChannelConnectivity.IDLE
+11/20/2025 12:43:35:DEBUG:ChannelConnectivity.READY
+INFO :      
+11/20/2025 12:43:35:INFO:
+INFO :      Received: get_parameters message 714bb11c-a2f4-4b07-91c2-d6a51c8f34e4
+11/20/2025 12:43:35:INFO:Received: get_parameters message 714bb11c-a2f4-4b07-91c2-d6a51c8f34e4
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:35:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+INFO :      Sent reply
+11/20/2025 12:43:35:INFO:Sent reply
+INFO :      Received initial parameters from one random client
+INFO :      Starting evaluation of initial global parameters
+INFO :      Evaluation returned no results (`None`)
+INFO :      
+INFO :      [ROUND 1]
+/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/torch_geometric/llm/utils/backend_utils.py:26: DeprecationWarning: `torch_geometric.distributed` has been deprecated since 2.7.0 and will no longer be maintained. For distributed training, refer to our tutorials on distributed training at https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html or cuGraph examples at https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples
+  from torch_geometric.distributed import (
+
+============================================================
+FedSymGraph Client 2 Starting
+Server: 127.0.0.1:8080
+Privacy: Disabled
+LLM Explanations: Disabled
+============================================================
+
+/home/runner/workspace/data_loader.py:56: UserWarning: 'data.DataLoader' is deprecated, use 'loader.DataLoader' instead
+  train_loader = DataLoader(train_graphs, batch_size=batch_size, shuffle=True)
+/home/runner/workspace/data_loader.py:57: UserWarning: 'data.DataLoader' is deprecated, use 'loader.DataLoader' instead
+  test_loader = DataLoader(test_graphs, batch_size=batch_size, shuffle=False)
+WARNING :   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+    Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+        $ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+    To view all available options, run:
+
+        $ flower-supernode --help
+
+    Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+11/20/2025 12:43:37:WARNING:DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+    Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+
+        $ flower-supernode --insecure --superlink='<IP>:<PORT>'
+
+    To view all available options, run:
+
+        $ flower-supernode --help
+
+    Using `start_client()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+11/20/2025 12:43:37:DEBUG:Opened insecure gRPC connection (no certificates were passed)
+11/20/2025 12:43:37:DEBUG:ChannelConnectivity.IDLE
+11/20/2025 12:43:37:DEBUG:ChannelConnectivity.READY
+INFO :      configure_fit: strategy sampled 2 clients (out of 2)
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: train message 7d362fca-04e8-4715-959b-6bff4bbf99ab
+11/20/2025 12:43:37:INFO:Received: train message 7d362fca-04e8-4715-959b-6bff4bbf99ab
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: train message 11f1723f-af1a-4169-a5c4-893665f0d2b5
+11/20/2025 12:43:37:INFO:Received: train message 11f1723f-af1a-4169-a5c4-893665f0d2b5
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+[Client 2] Training loss: 0.6979
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+[Client 1] Training loss: 0.6783
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+INFO :      aggregate_fit: received 2 results and 0 failures
+WARNING :   No fit_metrics_aggregation_fn provided
+INFO :      configure_evaluate: strategy sampled 2 clients (out of 2)
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: evaluate message 4a77dfb3-08ac-42a0-af7b-d48b19ec79ba
+11/20/2025 12:43:37:INFO:Received: evaluate message 4a77dfb3-08ac-42a0-af7b-d48b19ec79ba
+INFO :      
+11/20/2025 12:43:37:INFO:
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+INFO :      Received: evaluate message e08a0b5c-5cfc-4d41-a15c-13e4d0d10ac3
+11/20/2025 12:43:37:INFO:Received: evaluate message e08a0b5c-5cfc-4d41-a15c-13e4d0d10ac3
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+[Client 2] Evaluation - Loss: 0.6178, Accuracy: 0.6500
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+[Client 1] Evaluation - Loss: 0.6861, Accuracy: 0.5500
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+INFO :      aggregate_evaluate: received 2 results and 0 failures
+WARNING :   No evaluate_metrics_aggregation_fn provided
+INFO :      
+INFO :      [ROUND 2]
+INFO :      configure_fit: strategy sampled 2 clients (out of 2)
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: train message b4b1f5ef-d25a-4d34-9236-69e096e87101
+11/20/2025 12:43:37:INFO:Received: train message b4b1f5ef-d25a-4d34-9236-69e096e87101
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: train message 050e4172-7e4f-4823-ba24-3b0ac0271e19
+11/20/2025 12:43:37:INFO:Received: train message 050e4172-7e4f-4823-ba24-3b0ac0271e19
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+[Client 2] Training loss: 0.6381
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+[Client 1] Training loss: 0.5897
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+INFO :      aggregate_fit: received 2 results and 0 failures
+INFO :      configure_evaluate: strategy sampled 2 clients (out of 2)
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: evaluate message 16e9fd57-38b2-4d17-b07e-672aee371d53
+11/20/2025 12:43:37:INFO:Received: evaluate message 16e9fd57-38b2-4d17-b07e-672aee371d53
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: evaluate message df42eba9-02d1-44a2-89f2-28c780d661ae
+11/20/2025 12:43:37:INFO:Received: evaluate message df42eba9-02d1-44a2-89f2-28c780d661ae
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+[Client 1] Evaluation - Loss: 0.7191, Accuracy: 0.5500
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+[Client 2] Evaluation - Loss: 0.5807, Accuracy: 0.6500
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+INFO :      aggregate_evaluate: received 2 results and 0 failures
+INFO :      
+INFO :      [ROUND 3]
+INFO :      configure_fit: strategy sampled 2 clients (out of 2)
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: train message fdfe78f0-f51a-4742-81bc-4c09a2f6411c
+11/20/2025 12:43:37:INFO:Received: train message fdfe78f0-f51a-4742-81bc-4c09a2f6411c
+INFO :      
+11/20/2025 12:43:37:INFO:
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+INFO :      Received: train message 28dc89ad-eb69-41ef-b2ce-bdc62b0232f8
+11/20/2025 12:43:37:INFO:Received: train message 28dc89ad-eb69-41ef-b2ce-bdc62b0232f8
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+[Client 2] Training loss: 0.5675
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+[Client 1] Training loss: 0.5641
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+INFO :      aggregate_fit: received 2 results and 0 failures
+INFO :      configure_evaluate: strategy sampled 2 clients (out of 2)
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: evaluate message 6317f234-0e78-4f7b-b66c-6c90454e9a1e
+INFO :      
+11/20/2025 12:43:37:INFO:Received: evaluate message 6317f234-0e78-4f7b-b66c-6c90454e9a1e
+11/20/2025 12:43:37:INFO:
+INFO :      Received: evaluate message 8d2e7090-1cc0-4411-87d0-69be3c609484
+11/20/2025 12:43:37:INFO:Received: evaluate message 8d2e7090-1cc0-4411-87d0-69be3c609484
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+WARNING :   Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+11/20/2025 12:43:37:WARNING:Deprecation Warning: The `client_fn` function must return an instance of `Client`, but an instance of `NumpyClient` was returned. Please use `NumPyClient.to_client()` method to convert it to `Client`.
+[Client 1] Evaluation - Loss: 0.7574, Accuracy: 0.5500
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+
+[Client 2 ALERT]: Security Alert: Detected tactics T1110: Brute Force with 54.57% confidence.
+
+[Client 2] Evaluation - Loss: 0.5551, Accuracy: 0.7000
+INFO :      Sent reply
+11/20/2025 12:43:37:INFO:Sent reply
+INFO :      aggregate_evaluate: received 2 results and 0 failures
+INFO :      
+INFO :      [SUMMARY]
+INFO :      Run finished 3 round(s) in 2.91s
+INFO :          History (loss, distributed):
+INFO :              round 1: 0.6519662141799927
+INFO :              round 2: 0.6498759090900421
+INFO :              round 3: 0.6562623083591461
+INFO :      
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: reconnect message f49ce096-0f24-4ce0-8f3c-a0cb56ff2f40
+INFO :      
+11/20/2025 12:43:37:INFO:
+INFO :      Received: reconnect message 81132262-e5aa-4996-b59b-5ca435d1c8f5
+11/20/2025 12:43:37:INFO:Received: reconnect message 81132262-e5aa-4996-b59b-5ca435d1c8f5
+11/20/2025 12:43:37:INFO:Received: reconnect message f49ce096-0f24-4ce0-8f3c-a0cb56ff2f40
+11/20/2025 12:43:37:DEBUG:gRPC channel closed
+INFO :      Disconnect and shut down
+11/20/2025 12:43:37:INFO:Disconnect and shut down
+
+============================================================
+Federated Learning Completed!
+============================================================
+
+11/20/2025 12:43:37:DEBUG:gRPC channel closed
+INFO :      Disconnect and shut down
+11/20/2025 12:43:37:INFO:Disconnect and shut down
