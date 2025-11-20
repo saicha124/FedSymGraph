@@ -271,13 +271,14 @@ class HeterogeneousGraphLoader:
         
         return data
     
-    def load_graphs(self, flows_per_graph=100, max_graphs=500):
+    def load_graphs(self, flows_per_graph=100, max_graphs=500, balanced=True):
         """
-        Load TON_IoT data and create heterogeneous graphs.
+        Load TON_IoT data and create heterogeneous graphs with balanced labels.
         
         Args:
             flows_per_graph: Number of flows per graph
             max_graphs: Maximum number of graphs to create
+            balanced: If True, ensure balanced normal/attack graph distribution
         
         Returns:
             List of HeteroData objects
@@ -292,26 +293,70 @@ class HeterogeneousGraphLoader:
             df[numeric_cols] = self.scaler.fit_transform(df[numeric_cols].fillna(0))
         
         graphs = []
-        num_flows = len(df)
         
-        # Create graphs by sliding window with temporal ordering
-        window_idx = 0
-        for i in range(0, min(num_flows, max_graphs * flows_per_graph), flows_per_graph):
-            window_df = df.iloc[i:i+flows_per_graph]
+        if balanced:
+            # Stratified sampling: separate normal and attack flows
+            normal_df = df[df['binary_label'] == 0].reset_index(drop=True)
+            attack_df = df[df['binary_label'] == 1].reset_index(drop=True)
             
-            if len(window_df) < 10:
-                continue
+            print(f"Creating balanced graphs: {len(normal_df)} normal flows, {len(attack_df)} attack flows")
             
-            try:
-                graph = self.create_heterogeneous_graph(window_df, flows_per_graph, window_idx)
-                graphs.append(graph)
-                window_idx += 1
-            except Exception as e:
-                print(f"Warning: Failed to create graph from window {i}: {e}")
-                continue
+            # Create normal graphs
+            window_idx = 0
+            for i in range(0, min(len(normal_df), (max_graphs // 2) * flows_per_graph), flows_per_graph):
+                window_df = normal_df.iloc[i:i+flows_per_graph]
+                
+                if len(window_df) < 10:
+                    continue
+                
+                try:
+                    graph = self.create_heterogeneous_graph(window_df, flows_per_graph, window_idx)
+                    graphs.append(graph)
+                    window_idx += 1
+                except Exception as e:
+                    print(f"Warning: Failed to create normal graph from window {i}: {e}")
+                    continue
+                
+                if len(graphs) >= max_graphs // 2:
+                    break
             
-            if len(graphs) >= max_graphs:
-                break
+            # Create attack graphs
+            for i in range(0, min(len(attack_df), (max_graphs // 2) * flows_per_graph), flows_per_graph):
+                window_df = attack_df.iloc[i:i+flows_per_graph]
+                
+                if len(window_df) < 10:
+                    continue
+                
+                try:
+                    graph = self.create_heterogeneous_graph(window_df, flows_per_graph, window_idx)
+                    graphs.append(graph)
+                    window_idx += 1
+                except Exception as e:
+                    print(f"Warning: Failed to create attack graph from window {i}: {e}")
+                    continue
+                
+                if len(graphs) >= max_graphs:
+                    break
+        else:
+            # Original sliding window approach
+            num_flows = len(df)
+            window_idx = 0
+            for i in range(0, min(num_flows, max_graphs * flows_per_graph), flows_per_graph):
+                window_df = df.iloc[i:i+flows_per_graph]
+                
+                if len(window_df) < 10:
+                    continue
+                
+                try:
+                    graph = self.create_heterogeneous_graph(window_df, flows_per_graph, window_idx)
+                    graphs.append(graph)
+                    window_idx += 1
+                except Exception as e:
+                    print(f"Warning: Failed to create graph from window {i}: {e}")
+                    continue
+                
+                if len(graphs) >= max_graphs:
+                    break
         
         print(f"Created {len(graphs)} heterogeneous graphs from TON_IoT data")
         attack_graphs = sum(1 for g in graphs if g.y.item() == 1)
@@ -320,15 +365,16 @@ class HeterogeneousGraphLoader:
         return graphs
 
 
-def load_heterogeneous_for_client(client_id, csv_path, batch_size=8, flows_per_graph=100):
+def load_heterogeneous_for_client(client_id, csv_path, batch_size=8, flows_per_graph=100, balanced=True):
     """
-    Load heterogeneous graphs for a federated client.
+    Load heterogeneous graphs for a federated client with balanced labels.
     
     Args:
         client_id: Client identifier
         csv_path: Path to TON_IoT CSV
         batch_size: Batch size
         flows_per_graph: Flows per graph
+        balanced: If True, ensure balanced normal/attack distribution
     
     Returns:
         train_loader, test_loader
@@ -337,12 +383,15 @@ def load_heterogeneous_for_client(client_id, csv_path, batch_size=8, flows_per_g
     torch.manual_seed(client_id * 42)
     
     loader = HeterogeneousGraphLoader(csv_path, sample_size=10000 * client_id)
-    all_graphs = loader.load_graphs(flows_per_graph=flows_per_graph, max_graphs=200)
+    all_graphs = loader.load_graphs(flows_per_graph=flows_per_graph, max_graphs=200, balanced=balanced)
     
     if len(all_graphs) == 0:
         raise ValueError(f"No graphs created for client {client_id}. Check dataset.")
     
-    train_graphs, test_graphs = train_test_split(all_graphs, test_size=0.2, random_state=client_id)
+    # Shuffle to mix normal and attack graphs
+    np.random.shuffle(all_graphs)
+    
+    train_graphs, test_graphs = train_test_split(all_graphs, test_size=0.2, random_state=client_id, stratify=[g.y.item() for g in all_graphs])
     
     train_loader = DataLoader(train_graphs, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_graphs, batch_size=batch_size, shuffle=False)
