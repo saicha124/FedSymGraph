@@ -1,29 +1,41 @@
 import torch
-from opacus import PrivacyEngine
-from opacus.validators import ModuleValidator
-
+import numpy as np
 
 class DifferentialPrivacyWrapper:
-    """
-    Differential Privacy wrapper for federated clients.
-    Ensures that gradients don't leak sensitive information about local data.
-    """
     def __init__(self, model, optimizer, data_loader, noise_multiplier=1.1, max_grad_norm=1.0):
-        self.privacy_engine = PrivacyEngine()
-        
-        model = ModuleValidator.fix(model)
-        
-        self.model, self.optimizer, self.data_loader = self.privacy_engine.make_private(
-            module=model,
-            optimizer=optimizer,
-            data_loader=data_loader,
-            noise_multiplier=noise_multiplier,
-            max_grad_norm=max_grad_norm,
-        )
+        self.model = model
+        self.optimizer = optimizer
+        self.data_loader = data_loader
+        self.noise_multiplier = noise_multiplier
+        self.max_grad_norm = max_grad_norm
+        self.steps = 0
     
-    def get_epsilon(self, delta=1e-5):
-        """Calculate privacy budget (epsilon) spent so far."""
-        return self.privacy_engine.get_epsilon(delta)
+    def clip_gradients(self):
+        params = [p for p in self.model.parameters() if p.grad is not None]
+        total_norm = torch.sqrt(sum(p.grad.norm(2) ** 2 for p in params))
+        clip_coef = self.max_grad_norm / (total_norm + 1e-6)
+        if clip_coef < 1:
+            for p in params:
+                p.grad.mul_(clip_coef)
+    
+    def add_noise(self):
+        noise_scale = self.noise_multiplier * self.max_grad_norm
+        for p in self.model.parameters():
+            if p.grad is not None:
+                noise = torch.normal(0, noise_scale, size=p.grad.shape, device=p.device)
+                p.grad.add_(noise)
+    
+    def step(self):
+        self.clip_gradients()
+        self.add_noise()
+        self.optimizer.step()
+        self.steps += 1
+    
+    def get_epsilon(self, delta=1e-5, num_clients=2):
+        if self.steps == 0:
+            return 0.0
+        c = np.sqrt(self.steps * np.log(1 / delta))
+        return c / self.noise_multiplier
     
     def get_model(self):
         return self.model
