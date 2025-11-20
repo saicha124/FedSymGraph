@@ -27,6 +27,10 @@ args = "FedSymGraph Demo"
 task = "workflow.run"
 args = "FedSymGraph with Privacy"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Run FedSymGraph Demo"
+
 [[workflows.workflow]]
 name = "FedSymGraph Server"
 author = "agent"
@@ -56,6 +60,17 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "bash run_demo_with_privacy.sh"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "Run FedSymGraph Demo"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash run_demo.sh"
 
 [workflows.workflow.metadata]
 outputType = "console"
