@@ -2,7 +2,7 @@ import argparse
 import flwr as fl
 import torch
 from model import FedGNN
-from data_loader import load_local_graphs
+from data_loader_toniot import load_toniot_for_client
 from reasoning import HybridExplainer
 from privacy import DifferentialPrivacyWrapper
 
@@ -18,7 +18,12 @@ class FedSymClient(fl.client.NumPyClient):
         self.client_id = client_id
         self.use_privacy = use_privacy
         
-        self.train_loader, self.test_loader = load_local_graphs(client_id)
+        self.train_loader, self.test_loader = load_toniot_for_client(
+            client_id=client_id,
+            csv_path="TON_IoT_Network.csv",
+            batch_size=8,
+            flows_per_graph=100
+        )
         self.model = FedGNN(num_features=12, hidden_channels=32, num_classes=2).to(DEVICE)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01)
         self.explainer = HybridExplainer(use_openai=use_openai)

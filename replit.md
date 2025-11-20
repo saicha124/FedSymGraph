@@ -45,6 +45,14 @@ python client.py --client_id 1 --no-llm
 python client.py --client_id 2 --no-llm
 ```
 
+## TON_IoT Dataset
+
+**Currently Using**: Sample TON_IoT dataset (5,000 flows, 9 attack types)
+- 80% normal traffic, 20% attacks
+- Attack types: DDoS, DoS, Password cracking, Scanning, XSS, Injection, Backdoor, Ransomware, MITM
+
+**To use full dataset**: See `TONIOT_SETUP.md` for download instructions
+
 ## Features Implemented
 - ✅ Federated Learning with Flower framework
 - ✅ Graph Neural Networks (GAT architecture)
